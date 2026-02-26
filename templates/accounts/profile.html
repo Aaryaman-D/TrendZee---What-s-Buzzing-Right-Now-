@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}Profile — TrendZee{% endblock %}
+{% block content %}
+<div class="container-sm section-sm">
+  <div class="auth-card" style="max-width:520px;margin:0 auto">
+    <div class="auth-header">
+      <div class="logo-mark" style="margin:0 auto 14px;width:44px;height:44px;font-size:15px">{{ user.display_name|slice:":1"|upper }}</div>
+      <h2 class="auth-title">{{ user.display_name }}</h2>
+      <p class="auth-subtitle">{{ user.email }}</p>
+      {% if user.is_premium %}
+      <span class="badge-premium" style="margin-top:8px;display:inline-block">⚡ Premium</span>
+      {% endif %}
+    </div>
+
+    <!-- Account Details -->
+    <div
+      style="margin-bottom:24px;padding:16px;background:var(--bg-elevated);border-radius:var(--r-md);border:1px solid var(--b-subtle)">
+      <div
+        style="font-size:10px;font-weight:700;color:var(--t-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;font-family:var(--font-mono)">
+        Account Details</div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--b-subtle)">
+        <span style="font-size:12px;color:var(--t-muted)">Email</span>
+        <span style="font-size:12px;color:var(--t-primary)">{{ user.email }}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--b-subtle)">
+        <span style="font-size:12px;color:var(--t-muted)">Username</span>
+        <span style="font-size:12px;color:var(--t-primary)">{{ user.username }}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--b-subtle)">
+        <span style="font-size:12px;color:var(--t-muted)">Member Since</span>
+        <span style="font-size:12px;color:var(--t-primary)">{{ user.date_joined|date:"M d, Y" }}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0">
+        <span style="font-size:12px;color:var(--t-muted)">Plan</span>
+        <span style="font-size:12px;color:var(--t-primary)">{% if user.is_premium %}Premium{% else %}Free{% endif %}</span>
+      </div>
+    </div>
+
+    <!-- Edit Username -->
+    <div style="margin-bottom:24px">
+      <div
+        style="font-size:10px;font-weight:700;color:var(--t-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;font-family:var(--font-mono)">
+        Edit Profile</div>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="update_profile">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          {{ profile_form.username }}
+          {% if profile_form.username.errors %}
+          <ul class="errorlist">
+            {% for error in profile_form.username.errors %}<li>{{ error }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+      </form>
+    </div>
+
+    <!-- Change Password -->
+    <div style="margin-bottom:24px">
+      <div
+        style="font-size:10px;font-weight:700;color:var(--t-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;font-family:var(--font-mono)">
+        Change Password</div>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="change_password">
+        <div class="form-group">
+          <label class="form-label">Current Password</label>
+          <input type="password" name="old_password" class="form-control" placeholder="Current password">
+          {% if password_form.old_password.errors %}
+          <ul class="errorlist">
+            {% for error in password_form.old_password.errors %}<li>{{ error }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">New Password</label>
+          <input type="password" name="new_password1" class="form-control" placeholder="New password">
+          {% if password_form.new_password1.errors %}
+          <ul class="errorlist">
+            {% for error in password_form.new_password1.errors %}<li>{{ error }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm New Password</label>
+          <input type="password" name="new_password2" class="form-control" placeholder="Confirm new password">
+          {% if password_form.new_password2.errors %}
+          <ul class="errorlist">
+            {% for error in password_form.new_password2.errors %}<li>{{ error }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Change Password</button>
+      </form>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap">
+      {% if not user.is_premium %}
+      <a href="{% url 'upgrade' %}" class="btn btn-gold btn-sm">⚡ Upgrade to Premium</a>
+      {% endif %}
+      <a href="{% url 'dashboard' %}" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left"></i> Dashboard</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+{% block title %}{{ trend.title }} — TrendZee{% endblock %}
+{% block content %}
+<div class="container section-sm">
+  <a href="{% url 'dashboard' %}" class="btn btn-ghost btn-sm" style="margin-bottom:20px;display:inline-flex">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </a>
+
+  <!-- Header -->
+  <div class="trend-detail-header">
+    <div class="flex-between" style="flex-wrap:wrap;gap:12px;margin-bottom:14px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <span class="velocity-badge velocity-{{ trend.velocity }}">{{ trend.velocity_icon }} {{ trend.velocity|capfirst }}</span>
+        <span class="category-tag">{{ trend.get_category_display }}</span>
+        <span class="platform-tag">{{ trend.get_platform_display }}</span>
+        <span class="source-badge source-{{ trend.source }}">{{ trend.get_source_display }}</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        {% if trend.external_url %}
+        <a href="{{ trend.external_url }}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm">
+          <i class="fas fa-external-link-alt"></i> View Source
+        </a>
+        {% endif %}
+        {% if user.is_authenticated %}
+        <button class="save-btn {% if is_saved %}saved{% endif %}" data-trend-id="{{ trend.pk }}"
+          style="width:36px;height:36px;border-radius:var(--r-sm)">
+          <i class="{% if is_saved %}fas{% else %}far{% endif %} fa-heart"></i>
+        </button>
+        {% if user.is_premium %}
+        <a href="{% url 'creator_insights' trend.pk %}" class="btn btn-gold btn-sm">⚡ Creator Insights</a>
+        {% endif %}
+        {% endif %}
+      </div>
+    </div>
+    <h1
+      style="font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:14px">
+      {{ trend.title }}</h1>
+    <p style="color:var(--t-secondary);font-size:15px;max-width:720px;line-height:1.75">{{ trend.description }}</p>
+  </div>
+
+  <!-- Metrics -->
+  <div class="detail-metrics-grid">
+    <div class="detail-metric-card">
+      <div class="detail-metric-val" style="color:var(--rose)">{{ trend.likes|floatformat:0 }}</div>
+      <div class="detail-metric-lbl"><i class="fas fa-heart"></i> Likes</div>
+    </div>
+    <div class="detail-metric-card">
+      <div class="detail-metric-val" style="color:var(--violet-light)">{{ trend.shares|floatformat:0 }}</div>
+      <div class="detail-metric-lbl"><i class="fas fa-share"></i> Shares</div>
+    </div>
+    <div class="detail-metric-card">
+      <div class="detail-metric-val" style="color:var(--cyan)">{{ trend.comments|floatformat:0 }}</div>
+      <div class="detail-metric-lbl"><i class="fas fa-comment"></i> Comments</div>
+    </div>
+  </div>
+
+  <!-- Score Row -->
+  <div class="card" style="margin-bottom:20px;display:flex;gap:32px;flex-wrap:wrap;align-items:center">
+    <div>
+      <div
+        style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--t-muted);margin-bottom:3px;font-family:var(--font-mono)">
+        Trend Score</div>
+      <div style="font-family:var(--font-mono);font-size:2.4rem;font-weight:900;color:var(--violet-light)">{{ trend.score|floatformat:1 }}</div>
+    </div>
+    <div>
+      <div
+        style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--t-muted);margin-bottom:3px;font-family:var(--font-mono)">
+        Total Engagement</div>
+      <div style="font-family:var(--font-mono);font-size:2.4rem;font-weight:900">{{ trend.total_engagement|floatformat:0 }}</div>
+    </div>
+    <div style="margin-left:auto;text-align:right">
+      <div
+        style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--t-muted);margin-bottom:3px;font-family:var(--font-mono)">
+        Last Updated</div>
+      <div style="font-size:13px;color:var(--t-secondary);font-family:var(--font-mono)">{{ trend.updated_at|date:"M d, Y H:i" }}</div>
+    </div>
+  </div>
+
+  {% if trend.embed_url %}
+  <div style="margin-bottom:20px">
+    <div
+      style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--t-muted);margin-bottom:10px;font-family:var(--font-mono)">
+      Embedded Content</div>
+    <div style="border-radius:var(--r-lg);overflow:hidden;border:1px solid var(--b-default);background:var(--bg-card)">
+      <iframe src="{{ trend.embed_url }}" width="100%" height="380" frameborder="0" loading="lazy"
+        style="display:block"></iframe>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- AI Analysis -->
+  <div
+    style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--t-muted);margin-bottom:10px;font-family:var(--font-mono)">
+    AI Analysis</div>
+  <div class="ai-block">
+    <div class="ai-label"><i class="fas fa-brain"></i> TrendZee Intelligence — Gemini AI</div>
+    <div class="ai-text">{{ ai_explanation }}</div>
+  </div>
+
+  <!-- Creator Insights -->
+  <div
+    style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--t-muted);margin:20px 0 10px;font-family:var(--font-mono)">
+    Creator Strategy <span class="badge-premium" style="margin-left:6px">Premium</span></div>
+  {% if user.is_authenticated and user.is_premium %}
+  <a href="{% url 'creator_insights' trend.pk %}" class="btn btn-gold">⚡ View Creator Insights</a>
+  {% else %}
+  <div class="premium-blur-block">
+    <div class="premium-blur-content card">
+      <h4 style="margin-bottom:10px;font-family:var(--font-sans)">Suggested Hashtags</h4>
+      <p style="color:var(--t-muted)">#trending #viral #contentcreator #explore #engagement...</p>
+      <h4 style="margin:14px 0 8px">Caption Format</h4>
+      <p style="color:var(--t-muted)">Hook + Body + CTA optimized for {{ trend.get_platform_display }} engagement...</p>
+      <h4 style="margin:14px 0 8px">Target Audience</h4>
+      <p style="color:var(--t-muted)">Primary: 18-34 | Secondary: Creators | Niche: {{ trend.get_category_display }}...
+      </p>
+    </div>
+    <div class="premium-blur-overlay">
+      <div>
+        <div style="font-size:28px;margin-bottom:10px">⚡</div>
+        <h4 style="font-size:1.1rem;margin-bottom:6px;font-family:var(--font-sans)">Premium Insight</h4>
+        <p style="color:var(--t-secondary);font-size:13px;max-width:300px">Unlock hashtag suggestions, caption
+          templates, and full creator strategy.</p>
+      </div>
+      {% if not user.is_authenticated %}
+      <a href="{% url 'register' %}" class="btn btn-gold">Create Account</a>
+      {% else %}
+      <a href="{% url 'upgrade' %}" class="btn btn-gold">Upgrade to Premium</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Comments Section -->
+  <div style="margin-top:28px">
+    <div
+      style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--t-muted);margin-bottom:14px;font-family:var(--font-mono)">
+      Comments ({{ comments|length }})
+    </div>
+
+    {% if user.is_authenticated %}
+    <form id="commentForm" style="margin-bottom:20px">
+      {% csrf_token %}
+      <div style="display:flex;gap:8px;align-items:flex-start">
+        <div class="logo-mark" style="width:32px;height:32px;font-size:11px;flex-shrink:0">{{ user.display_name|slice:":1"|upper }}</div>
+        <div style="flex:1">
+          <textarea name="text" id="commentText" placeholder="Add a comment..." rows="2"
+            style="width:100%;background:var(--bg-elevated);border:1px solid var(--b-subtle);border-radius:var(--r-sm);padding:10px;color:var(--t-primary);font-size:13px;resize:vertical;font-family:var(--font-sans)"></textarea>
+          <button type="submit" class="btn btn-primary btn-sm" style="margin-top:6px">
+            <i class="fas fa-paper-plane"></i> Post Comment
+          </button>
+        </div>
+      </div>
+    </form>
+    {% else %}
+    <div
+      style="padding:16px;background:var(--bg-elevated);border:1px solid var(--b-subtle);border-radius:var(--r-sm);margin-bottom:20px;text-align:center">
+      <p style="font-size:13px;color:var(--t-secondary);margin-bottom:8px">Sign in to join the conversation</p>
+      <a href="{% url 'login' %}" class="btn btn-primary btn-sm">Log In</a>
+    </div>
+    {% endif %}
+
+    <div id="commentsList">
+      {% for comment in comments %}
+      <div class="comment-item" style="display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--b-subtle)">
+        <div class="logo-mark"
+          style="width:28px;height:28px;font-size:10px;flex-shrink:0;background:linear-gradient(135deg,var(--cyan),var(--violet))">
+          {{ comment.author.display_name|slice:":1"|upper }}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;gap:8px;align-items:baseline;margin-bottom:4px">
+            <span style="font-size:12px;font-weight:600;color:var(--t-primary)">{{ comment.author.display_name }}</span>
+            <span style="font-size:10px;color:var(--t-muted);font-family:var(--font-mono)">{{ comment.created_at|date:"M
+              d, Y H:i" }}</span>
+          </div>
+          <p style="font-size:13px;color:var(--t-secondary);line-height:1.6;margin:0">{{ comment.text }}</p>
+        </div>
+      </div>
+      {% empty %}
+      <div id="noCommentsMsg"
+        style="padding:20px;text-align:center;color:var(--t-muted);font-size:12px;font-family:var(--font-mono)">
+        No comments yet. Be the first to share your thoughts!
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  window.USER_INITIAL = "{{ user.display_name|slice:':1'|upper|default:'U' }}";
+  window.TREND_ID = {{ trend.pk }};
+
+  // Comment form submission
+  const commentForm = document.getElementById('commentForm');
+  if (commentForm) {
+    commentForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const text = document.getElementById('commentText').value.trim();
+      if (!text) return;
+
+      const btn = this.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting...';
+
+      try {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const formData = new FormData();
+        formData.append('text', text);
+
+        const resp = await fetch(`/trends/${window.TREND_ID}/comment/`, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrfToken },
+          body: formData,
+          credentials: 'same-origin'
+        });
+        const data = await resp.json();
+        if (data.success) {
+          // Remove "no comments" message if present
+          const noMsg = document.getElementById('noCommentsMsg');
+          if (noMsg) noMsg.remove();
+
+          // Prepend new comment
+          const list = document.getElementById('commentsList');
+          const html = `
+          <div class="comment-item" style="display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--b-subtle)">
+            <div class="logo-mark" style="width:28px;height:28px;font-size:10px;flex-shrink:0;background:linear-gradient(135deg,var(--cyan),var(--violet))">${data.comment.author[0].toUpperCase()}</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;gap:8px;align-items:baseline;margin-bottom:4px">
+                <span style="font-size:12px;font-weight:600;color:var(--t-primary)">${data.comment.author}</span>
+                <span style="font-size:10px;color:var(--t-muted);font-family:var(--font-mono)">${data.comment.created_at}</span>
+              </div>
+              <p style="font-size:13px;color:var(--t-secondary);line-height:1.6;margin:0">${data.comment.text}</p>
+            </div>
+          </div>`;
+          list.insertAdjacentHTML('afterbegin', html);
+          document.getElementById('commentText').value = '';
+        } else {
+          alert(data.error || 'Could not post comment');
+        }
+      } catch (err) {
+        alert('Network error — please try again');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Post Comment';
+      }
+    });
+  }
+</script>
+{% endblock %}

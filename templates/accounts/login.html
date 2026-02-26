@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Sign In — TrendZee{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="logo-mark">TZ</div>
+      <h1 class="auth-title">Welcome back</h1>
+      <p class="auth-subtitle">Sign in to your TrendZee account</p>
+    </div>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group">
+        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+        <ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+        {% endif %}
+      </div>
+      {% endfor %}
+      {% if form.non_field_errors %}
+      <div class="message message--error" style="margin-bottom:14px">
+        {% for e in form.non_field_errors %}{{ e }}{% endfor %}
+      </div>
+      {% endif %}
+      <button type="submit" class="btn btn-primary btn-full" style="margin-top:4px">
+        <i class="fas fa-arrow-right"></i> Sign In
+      </button>
+    </form>
+    <div class="auth-footer-text" style="margin-top:12px">
+      <a href="{% url 'password_reset' %}" style="font-size:12px">Forgot your password?</a>
+    </div>
+    <div class="auth-footer-text">
+      Don't have an account? <a href="{% url 'register' %}">Create one free</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

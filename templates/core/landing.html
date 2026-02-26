@@ -1,0 +1,349 @@
+{% extends 'base.html' %}
+{% block title %}TrendZee — Read the Signal. Ignore the Noise.{% endblock %}
+
+{% block extra_css %}{% endblock %}
+
+{% block content %}
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-2col">
+      <!-- Left -->
+      <div>
+        <div class="hero-eyebrow reveal">Signal Intelligence Platform v2.0</div>
+        <h1 class="hero-title reveal reveal-1">
+          <span class="line-1">TrendZee</span>
+          <span class="line-2">"What's Buzzing?Right Now."</span>
+        </h1>
+        <p class="hero-tagline reveal reveal-2">
+          AI-powered social trend intelligence that explains <em>why</em> something is trending — not just that it is.
+          Built for creators, strategists, and founders who move first.
+        </p>
+        <div class="hero-ctas reveal reveal-3">
+          <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-chart-line"></i> View Live Trends
+          </a>
+          {% if not user.is_authenticated %}
+          <a href="{% url 'register' %}" class="btn btn-secondary btn-lg">
+            Explore Dashboard
+          </a>
+          {% endif %}
+        </div>
+
+        <div class="hero-stats reveal reveal-4">
+          <div class="hero-stat">
+            <div class="hero-stat-value">7</div>
+            <div class="hero-stat-label">Platforms</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">11</div>
+            <div class="hero-stat-label">Categories</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">AI</div>
+            <div class="hero-stat-label">Powered</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-value">0s</div>
+            <div class="hero-stat-label">Scroll Time</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Dashboard Mockup -->
+      <div class="hero-visual reveal reveal-2">
+        <div class="mockup-header">
+          <span class="mockup-title">Live Trend Feed</span>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="mockup-dot"></div>
+            <span style="font-size:10px;color:var(--emerald);font-family:var(--font-mono)">LIVE</span>
+          </div>
+        </div>
+        {% for trend in top_trends|slice:":6" %}
+        <div class="mockup-row" style="animation-delay:{{ forloop.counter0 }}00ms">
+          <span class="mockup-row-num">{{ forloop.counter }}</span>
+          <span class="mockup-row-title">{{ trend.title }}</span>
+          <span class="velocity-badge velocity-{{ trend.velocity }}" style="font-size:9px;padding:2px 6px">{{ trend.velocity_icon }}</span>
+          <span class="mockup-row-score">{{ trend.score|floatformat:0 }}</span>
+        </div>
+        {% empty %}
+        {% for i in "123456" %}
+        <div class="mockup-row" style="animation-delay:{{ forloop.counter0 }}00ms">
+          <span class="mockup-row-num">{{ forloop.counter }}</span>
+          <span class="mockup-row-title"
+            style="background:var(--b-subtle);border-radius:4px;color:transparent;width:180px">placeholder</span>
+          <span style="width:40px;height:16px;background:var(--b-subtle);border-radius:4px;display:inline-block"></span>
+        </div>
+        {% endfor %}
+        {% endfor %}
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--b-subtle);display:flex;gap:8px">
+          <div
+            style="flex:1;background:var(--violet-dim);border:1px solid var(--b-accent);border-radius:var(--r-sm);padding:8px 10px;">
+            <div style="font-size:10px;color:var(--violet-light);font-family:var(--font-mono);font-weight:700">AI
+              ANALYSIS</div>
+            <div style="font-size:11px;color:var(--t-secondary);margin-top:3px;line-height:1.5">Why this trend is
+              gaining traction across platforms...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROOF BAR ═══ -->
+<div class="proof-bar">
+  <div class="container">
+    <div class="proof-items">
+      <div class="proof-item">
+        <div class="proof-val">12K+</div>
+        <div class="proof-lbl">Active Creators</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-val">78%</div>
+        <div class="proof-lbl">Faster Discovery</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-val">3×</div>
+        <div class="proof-lbl">Engagement Lift</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-val">42%</div>
+        <div class="proof-lbl">Planning Efficiency</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FEATURES ═══ -->
+<section class="section">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:48px">
+      <div class="hero-eyebrow" style="justify-content:center;display:inline-flex">Three Core Pillars</div>
+      <h2 class="display-lg" style="margin-top:16px">Intelligence Over Scroll</h2>
+      <p style="color:var(--t-secondary);max-width:480px;margin:12px auto 0;font-size:15px;line-height:1.7">
+        Every feature is designed to give you structured signal — not addictive noise.
+      </p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-item reveal">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Signal Dashboard</div>
+        <p class="feature-desc">Structured trend categories — Tech, Culture, Finance, Creator, Gaming. Filter by
+          platform, velocity, and score. No algorithm manipulation. Pure data.</p>
+        <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:4px">
+          <span class="category-tag">Technology</span>
+          <span class="category-tag">Entertainment</span>
+          <span class="category-tag">Sports</span>
+          <span class="category-tag">Gaming</span>
+        </div>
+      </div>
+      <div class="feature-item reveal reveal-1">
+        <div class="feature-icon">🤖</div>
+        <div class="feature-title">AI Insight Engine</div>
+        <p class="feature-desc">Gemini AI explains every trend: why it's gaining traction, sentiment score, predicted
+          lifespan, and influencer amplification patterns. Context, not just data.</p>
+        <div
+          style="margin-top:16px;background:var(--violet-dim);border:1px solid var(--b-accent);border-radius:var(--r-sm);padding:10px">
+          <div style="font-size:10px;color:var(--violet-light);font-family:var(--font-mono);margin-bottom:5px">AI
+            ANALYSIS PREVIEW</div>
+          <div style="font-size:11px;color:var(--t-secondary);line-height:1.6">This trend is gaining traction due to
+            high organic amplification across creator networks with rising velocity...</div>
+        </div>
+      </div>
+      <div class="feature-item reveal reveal-2">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Creator Optimization</div>
+        <p class="feature-desc">Premium hashtag clusters, content angle suggestions, caption formats, and best format
+          recommendations (Reels, Shorts, Threads) tailored per trend.</p>
+        <div style="margin-top:16px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t-secondary)"><span
+              class="badge-premium">Premium</span> Hashtag suggestions</div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t-secondary)"><span
+              class="badge-premium">Premium</span> Caption templates</div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--t-secondary)"><span
+              class="badge-premium">Premium</span> Engagement strategy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ LIVE SIGNAL FEED ═══ -->
+<section class="section"
+  style="background:var(--bg-1);border-top:1px solid var(--b-subtle);border-bottom:1px solid var(--b-subtle)">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:48px;align-items:center">
+      <div>
+        <div class="hero-eyebrow" style="display:inline-flex">Live Intelligence Feed</div>
+        <h2 class="display-md" style="margin:16px 0 12px">Real-Time Signal Board</h2>
+        <p style="color:var(--t-secondary);font-size:14px;line-height:1.75;max-width:420px">
+          Watch trends move in real time. Rising signals turn amber, exploding trends flash red, steady movers stay
+          green. Built for pattern recognition at a glance.
+        </p>
+        <div style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap">
+          <a href="{% url 'dashboard' %}" class="btn btn-primary"><i class="fas fa-signal"></i> Open Dashboard</a>
+          {% if not user.is_authenticated %}
+          <a href="{% url 'register' %}" class="btn btn-secondary">Free Account</a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="signal-feed">
+        <div class="signal-feed-header">
+          <span class="signal-feed-title">Trending Signals</span>
+          <div class="live-indicator">
+            <div class="live-dot"></div> Live
+          </div>
+        </div>
+        {% for trend in top_trends %}
+        <div class="feed-item" style="animation-delay:{{ forloop.counter0 }}50ms">
+          <span
+            class="feed-rank {% if forloop.counter == 1 %}r1{% elif forloop.counter == 2 %}r2{% elif forloop.counter == 3 %}r3{% endif %}">{{ forloop.counter }}</span>
+          <div class="feed-content">
+            <div class="feed-title">{{ trend.title }}</div>
+            <div class="feed-meta">
+              <span class="velocity-badge velocity-{{ trend.velocity }}" style="font-size:9px;padding:1px 6px">{{ trend.velocity_icon }} {{ trend.velocity|capfirst }}</span>
+              <span class="platform-tag">{{ trend.get_platform_display }}</span>
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div class="feed-score">{{ trend.score|floatformat:0 }}</div>
+            <div class="feed-bar-wrap">
+              <div class="feed-bar" style="width:{{ trend.score }}%"></div>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div style="padding:24px;text-align:center;color:var(--t-muted);font-size:12px;font-family:var(--font-mono)">
+          Run: python manage.py seed_trends
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS ═══ -->
+<section class="section">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:40px">
+      <h2 class="display-md">Trusted by 12,000+ Creators</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      <div class="testimonial-card reveal">
+        <p class="testimonial-text">"TrendZee cut my trend research from 2 hours to 15 minutes. The AI analysis is
+          genuinely useful — not just summaries but actual strategic insight."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">S</div>
+          <div>
+            <div class="testimonial-name">Sarah K.</div>
+            <div class="testimonial-role">Content Strategist, 340K followers</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-1">
+        <p class="testimonial-text">"Finally a tool that feels like Bloomberg but for social media. The velocity
+          indicators alone have changed how I brief clients on what to create next."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:linear-gradient(135deg,var(--cyan),var(--emerald))">M</div>
+          <div>
+            <div class="testimonial-name">Marcus T.</div>
+            <div class="testimonial-role">Founder, Growth Agency</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-2">
+        <p class="testimonial-text">"The chatbot is scarily good. I asked about gaming trends and it gave me a 3-week
+          content calendar idea based on real data. This is the future."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:linear-gradient(135deg,var(--rose),var(--amber))">J</div>
+          <div>
+            <div class="testimonial-name">Jess L.</div>
+            <div class="testimonial-role">Digital Founder & Creator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PRICING ═══ -->
+<section class="section" style="background:var(--bg-1);border-top:1px solid var(--b-subtle)">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:48px">
+      <div class="hero-eyebrow" style="justify-content:center;display:inline-flex">Pricing</div>
+      <h2 class="display-lg" style="margin-top:16px">Start Free. Scale Smart.</h2>
+    </div>
+    <div class="pricing-grid">
+      <!-- Free -->
+      <div class="pricing-card">
+        <div class="pricing-plan" style="color:var(--t-secondary)">Free</div>
+        <div class="pricing-price"><sup>$</sup>0<sub>/mo</sub></div>
+        <p style="color:var(--t-secondary);font-size:12px;margin:8px 0 0">Everything to start reading signal</p>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check check"></i> Full trends dashboard</li>
+          <li><i class="fas fa-check check"></i> Category & platform filters</li>
+          <li><i class="fas fa-check check"></i> AI trend explanations</li>
+          <li><i class="fas fa-check check"></i> Save up to 10 trends</li>
+          <li><i class="fas fa-times" style="color:var(--t-muted)"></i> Creator insights</li>
+          <li><i class="fas fa-times" style="color:var(--t-muted)"></i> AI chatbot</li>
+        </ul>
+        <a href="{% url 'register' %}" class="btn btn-secondary btn-full">Get Started Free</a>
+      </div>
+      <!-- Pro -->
+      <div class="pricing-card pricing-card--pro">
+        <div class="pricing-card-badge">BEST</div>
+        <div class="pricing-plan" style="color:var(--violet-light)">Pro</div>
+        <div class="pricing-price" style="color:var(--violet-light)"><sup>$</sup>19<sub>/mo</sub></div>
+        <p style="color:var(--t-secondary);font-size:12px;margin:8px 0 0">Full intelligence stack</p>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check check"></i> Everything in Free</li>
+          <li><i class="fas fa-check check"></i> Unlimited saved trends</li>
+          <li><i class="fas fa-check check"></i> AI chatbot access</li>
+          <li><i class="fas fa-check check"></i> Creator strategy insights</li>
+          <li><i class="fas fa-check check"></i> Hashtag clusters</li>
+          <li><i class="fas fa-check check"></i> Caption templates</li>
+        </ul>
+        <a href="{% url 'upgrade' %}" class="btn btn-primary btn-full">Upgrade to Pro</a>
+      </div>
+      <!-- Agency -->
+      <div class="pricing-card">
+        <div class="pricing-plan" style="color:var(--amber)">Agency</div>
+        <div class="pricing-price"><sup>$</sup>79<sub>/mo</sub></div>
+        <p style="color:var(--t-secondary);font-size:12px;margin:8px 0 0">For teams and agencies</p>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check check"></i> Everything in Pro</li>
+          <li><i class="fas fa-check check"></i> Team seats (up to 10)</li>
+          <li><i class="fas fa-check check"></i> Custom reports</li>
+          <li><i class="fas fa-check check"></i> API access</li>
+          <li><i class="fas fa-check check"></i> Priority support</li>
+          <li><i class="fas fa-check check"></i> White-label exports</li>
+        </ul>
+        <a href="mailto:hello@trendzee.com" class="btn btn-gold btn-full">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BOTTOM CTA ═══ -->
+<section class="section" style="text-align:center">
+  <div class="container">
+    <div style="max-width:580px;margin:0 auto">
+      <h2 class="display-lg" style="margin-bottom:16px">Start Reading the Signal</h2>
+      <p style="color:var(--t-secondary);font-size:15px;margin-bottom:32px;line-height:1.7">
+        Join 12,000+ creators and strategists who've replaced infinite scrolling with structured intelligence.
+      </p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        {% if not user.is_authenticated %}
+        <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Create Free Account</a>
+        <a href="{% url 'upgrade' %}" class="btn btn-gold btn-lg">⚡ Go Premium</a>
+        {% else %}
+        <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg"><i class="fas fa-chart-line"></i> Open
+          Dashboard</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

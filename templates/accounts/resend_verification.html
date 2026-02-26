@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Resend Verification — TrendZee{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="logo-mark">TZ</div>
+      <h1 class="auth-title">Resend Verification</h1>
+      <p class="auth-subtitle">Enter your email to receive a new verification link</p>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" name="email" class="form-control" placeholder="your@email.com" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">
+        <i class="fas fa-envelope"></i> Send Verification Email
+      </button>
+    </form>
+
+    <div class="auth-footer-text">
+      <a href="{% url 'login' %}">Back to Login</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

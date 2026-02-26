@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Creator Insights: {{ trend.title }} — TrendZee{% endblock %}
+
+{% block content %}
+<div class="container section-sm">
+  <a href="{% url 'trend_detail' trend.pk %}" class="btn btn-secondary btn-sm" style="margin-bottom: 24px;">
+    <i class="fas fa-arrow-left"></i> Back to Trend
+  </a>
+
+  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+    <span class="badge-premium" style="font-size: 13px; padding: 5px 14px;">⚡ Premium</span>
+    <span class="category-tag">{{ trend.get_category_display }}</span>
+  </div>
+
+  <h1 style="font-family: var(--font-display); font-size: clamp(1.6rem, 4vw, 2.5rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px;">
+    Creator Insights
+  </h1>
+  <p style="color: var(--text-secondary); margin-bottom: 32px; font-size: 16px;">
+    for <em>{{ trend.title }}</em>
+  </p>
+
+  <div class="insights-block">
+    <div class="ai-label" style="color: var(--accent-gold);">
+      <i class="fas fa-magic"></i> AI-Generated Creator Strategy — Powered by Gemini
+    </div>
+    <div class="insights-text">{{ insights }}</div>
+  </div>
+
+  <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
+    <a href="{% url 'chatbot' %}" class="btn btn-primary">
+      <i class="fas fa-robot"></i> Discuss with AI
+    </a>
+    <a href="{% url 'trend_detail' trend.pk %}" class="btn btn-secondary">
+      View Trend Details
+    </a>
+  </div>
+</div>
+{% endblock %}

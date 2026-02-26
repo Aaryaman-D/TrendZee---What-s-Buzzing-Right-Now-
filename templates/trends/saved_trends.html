@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Saved Trends — TrendZee{% endblock %}
+
+{% block content %}
+<div class="container section-sm">
+  <div class="flex-between" style="margin-bottom: 32px; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h1 class="display-md">Saved Trends</h1>
+      <p class="text-muted" style="margin-top: 6px; font-size: 14px;">
+        {{ saved_trends|length }} trend{{ saved_trends|length|pluralize }} saved
+      </p>
+    </div>
+    <a href="/trends/" class="btn btn-secondary">
+      <i class="fas fa-chart-line"></i> Browse Trends
+    </a>
+  </div>
+
+  {% if saved_trends %}
+    <div class="grid grid-3" style="gap: 16px;">
+      {% for saved in saved_trends %}
+        {% with trend=saved.trend %}
+        <div class="trend-card" onclick="window.location='/trends/{{ trend.pk }}/'">
+          <div class="trend-card-header">
+            <div class="trend-card-title">{{ trend.title }}</div>
+            <div style="text-align: right; flex-shrink: 0;">
+              <div class="trend-score">{{ trend.score|floatformat:0 }}</div>
+              <div class="trend-score-label">Score</div>
+            </div>
+          </div>
+          <div class="trend-card-meta">
+            <span class="velocity-badge velocity-{{ trend.velocity }}">
+              {{ trend.velocity_icon }} {{ trend.velocity|capfirst }}
+            </span>
+            <span class="category-tag">{{ trend.get_category_display }}</span>
+          </div>
+          <p class="trend-card-description">{{ trend.description }}</p>
+          <div class="trend-card-footer">
+            <div class="trend-metrics">
+              <span class="trend-metric">
+                <i class="fas fa-heart" style="color: var(--accent-secondary);"></i>
+                {{ trend.likes|floatformat:0 }}
+              </span>
+              <span class="trend-metric">
+                <i class="fas fa-share" style="color: var(--accent-primary);"></i>
+                {{ trend.shares|floatformat:0 }}
+              </span>
+            </div>
+            <button
+              class="save-btn saved"
+              data-trend-id="{{ trend.pk }}"
+              title="Remove from saved"
+              onclick="event.stopPropagation();"
+            >
+              <i class="fas fa-heart"></i>
+            </button>
+          </div>
+          <div style="font-size: 11px; color: var(--text-muted); margin-top: 10px;">
+            Saved {{ saved.saved_at|date:"M d, Y" }}
+          </div>
+        </div>
+        {% endwith %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-state-icon">🔖</div>
+      <div class="empty-state-title">No saved trends yet</div>
+      <p class="empty-state-text">
+        Browse trends and click the heart icon to save them for quick access.
+      </p>
+      <a href="/trends/" class="btn btn-primary">Browse Trends</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

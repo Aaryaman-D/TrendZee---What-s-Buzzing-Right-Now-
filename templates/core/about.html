@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}About — TrendZee{% endblock %}
+
+{% block content %}
+<div class="container section">
+  <div class="container-sm">
+    <h1 class="display-lg" style="margin-bottom: 16px;">About TrendZee</h1>
+    <p style="color: var(--accent-primary); font-size: 1.1rem; margin-bottom: 32px; font-style: italic;">
+      Social Media Optimized for Engagement. We Optimize for Insight.
+    </p>
+
+    <div style="color: var(--text-secondary); font-size: 16px; line-height: 1.8; display: flex; flex-direction: column; gap: 20px;">
+      <p>
+        TrendZee is a structured social signal intelligence platform designed to cut through the noise of infinite scrolling and deliver meaningful trend data in a time-efficient, categorized format.
+      </p>
+      <p>
+        Instead of optimizing for engagement and time-on-site like social media platforms do, TrendZee optimizes for your time — giving you structured intelligence that helps you make better decisions faster.
+      </p>
+      <p>
+        The platform aggregates trending digital signals across 7 major platforms, applies AI analysis via Google's Gemini model, and presents insights in a clean, professional dashboard that respects your attention.
+      </p>
+
+      <div class="card" style="margin-top: 16px;">
+        <div class="sidebar-section-title" style="margin-bottom: 20px;">Platform Principles</div>
+        <div style="display: grid; gap: 16px;">
+          <div>
+            <div style="font-family: var(--font-display); font-weight: 700; margin-bottom: 4px; font-size: 15px;">No infinite scroll</div>
+            <div style="font-size: 14px; color: var(--text-secondary);">Structured, paginated data with clear hierarchy.</div>
+          </div>
+          <div>
+            <div style="font-family: var(--font-display); font-weight: 700; margin-bottom: 4px; font-size: 15px;">AI with boundaries</div>
+            <div style="font-size: 14px; color: var(--text-secondary);">Our AI only answers trend-related questions, backed by real data.</div>
+          </div>
+          <div>
+            <div style="font-family: var(--font-display); font-weight: 700; margin-bottom: 4px; font-size: 15px;">Signal over noise</div>
+            <div style="font-size: 14px; color: var(--text-secondary);">Every feature is designed for intelligence extraction, not addictive engagement.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

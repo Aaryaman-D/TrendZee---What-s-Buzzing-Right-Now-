@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - TrendZee{% endblock %}
+
+{% block content %}
+<div class="container section-sm">
+  <div class="page-header">
+    <div class="flex-between" style="flex-wrap:wrap;gap:16px">
+      <div>
+        <h1 class="display-md">
+          {% if user.is_authenticated %}Signal Dashboard{% else %}Trending Now{% endif %}
+        </h1>
+        <p style="color:var(--t-secondary);font-size:13px;margin-top:4px;font-family:var(--font-mono)">
+          {% if selected_category %}<span style="color:var(--violet-light)">{{ selected_category|capfirst }}</span>
+          &middot; {% endif %}
+          {{ page_obj.paginator.count }} signals found
+        </p>
+      </div>
+      {% if user.is_authenticated %}
+      <a href="{% url 'chatbot' %}" class="btn btn-secondary btn-sm">
+        <i class="fas fa-robot"></i> AI Chat
+      </a>
+      {% endif %}
+    </div>
+
+    <form method="get" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:16px">
+      <div class="search-wrap" style="max-width:280px;flex:1">
+        <i class="fas fa-search"></i>
+        <input type="text" name="search" class="search-input" placeholder="Search trends..." value="{{ search_query }}">
+      </div>
+      <select name="category" class="filter-select" onchange="this.form.submit()">
+        <option value="">All Categories</option>
+        {% for val, label in categories %}
+        <option value="{{ val }}" {% if selected_category == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <select name="platform" class="filter-select" onchange="this.form.submit()">
+        <option value="">All Platforms</option>
+        {% for val, label in platforms %}
+        <option value="{{ val }}" {% if selected_platform == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <select name="source" class="filter-select" onchange="this.form.submit()">
+        <option value="">All Sources</option>
+        {% for val, label in sources %}
+        <option value="{{ val }}" {% if selected_source == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-filter"></i></button>
+      {% if selected_category or selected_platform or selected_source or search_query %}
+      <a href="{% url 'dashboard' %}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Clear</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <div class="metric-row">
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--violet-light)">{{ page_obj.paginator.count }}</div>
+      <div class="metric-label">Active Trends</div>
+      <div class="metric-delta delta-up">Live Feed</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--v-exploding)">{{ page_obj.paginator.count }}</div>
+      <div class="metric-label">Total Signals</div>
+      <div class="metric-delta" style="color:var(--t-muted)">All categories</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--cyan)">7</div>
+      <div class="metric-label">Platforms Tracked</div>
+      <div class="metric-delta" style="color:var(--t-muted)">Cross-platform</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--emerald)">AI</div>
+      <div class="metric-label">Insight Engine</div>
+      <div class="metric-delta delta-up">Gemini Powered</div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid-layout">
+    <div>
+      {% if trends %}
+      <div class="trend-table-wrap">
+        <table class="trend-table" id="trendTable">
+          <thead>
+            <tr>
+              <th class="sortable" data-sort="index">#</th>
+              <th class="sortable" data-sort="title">Trend</th>
+              <th>Platform</th>
+              <th>Category</th>
+              <th>Source</th>
+              <th class="sortable" data-sort="score">Score</th>
+              <th>Velocity</th>
+              <th>Engagement</th>
+              {% if user.is_authenticated %}<th></th>{% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for trend in trends %}
+            <tr style="cursor:pointer" onclick="window.location='{% url 'trend_detail' trend.pk %}'">
+              <td style="font-family:var(--font-mono);color:var(--t-muted);font-size:12px">{{ forloop.counter0|add:page_obj.start_index }}</td>
+              <td class="trend-title-cell">
+                <a href="{% url 'trend_detail' trend.pk %}" class="trend-title-link"
+                  onclick="event.stopPropagation()">{{ trend.title }}</a>
+                <div class="trend-summary-cell" style="margin-top:2px">
+                  <div class="trend-summary-text">{{ trend.description }}</div>
+                </div>
+              </td>
+              <td><span class="platform-tag">{{ trend.get_platform_display }}</span></td>
+              <td><span class="category-tag">{{ trend.get_category_display }}</span></td>
+              <td><span class="source-badge source-{{ trend.source }}">{{ trend.get_source_display }}</span></td>
+              <td>
+                <div class="score-cell">{{ trend.score|floatformat:0 }}</div>
+                <div class="mini-bar-wrap">
+                  <div class="mini-bar" style="width:{{ trend.score }}%"></div>
+                </div>
+              </td>
+              <td><span class="velocity-badge velocity-{{ trend.velocity }}">{{ trend.velocity_icon }} {{ trend.velocity|capfirst }}</span></td>
+              <td>
+                <div class="trend-metrics" style="flex-direction:column;gap:2px">
+                  <span class="trend-metric"><i class="fas fa-heart" style="color:var(--rose);width:10px"></i> <span
+                      class="engage-val">{{ trend.likes|floatformat:0 }}</span></span>
+                  <span class="trend-metric"><i class="fas fa-share" style="color:var(--violet);width:10px"></i> <span
+                      class="engage-val">{{ trend.shares|floatformat:0 }}</span></span>
+                </div>
+              </td>
+              {% if user.is_authenticated %}
+              <td onclick="event.stopPropagation()">
+                <button class="save-btn {% if trend.pk in saved_ids %}saved{% endif %}" data-trend-id="{{ trend.pk }}">
+                  <i class="{% if trend.pk in saved_ids %}fas{% else %}far{% endif %} fa-heart"></i>
+                </button>
+              </td>
+              {% endif %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if page_obj.has_other_pages %}
+      <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_platform %}&platform={{ selected_platform }}{% endif %}{% if selected_source %}&source={{ selected_source }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}"
+          class="pagination-btn">
+          <i class="fas fa-chevron-left"></i> Prev
+        </a>
+        {% endif %}
+
+        <div class="pagination-pages">
+          {% for num in page_obj.paginator.page_range %}
+          {% if num == page_obj.number %}
+          <span class="pagination-page active">{{ num }}</span>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %} <a
+            href="?page={{ num }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_platform %}&platform={{ selected_platform }}{% endif %}{% if selected_source %}&source={{ selected_source }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}"
+            class="pagination-page">{{ num }}</a>
+            {% endif %}
+            {% endfor %}
+        </div>
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_platform %}&platform={{ selected_platform }}{% endif %}{% if selected_source %}&source={{ selected_source }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}"
+          class="pagination-btn">
+          Next <i class="fas fa-chevron-right"></i>
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">&#128269;</div>
+        <div class="empty-title">No signals found</div>
+        <p class="empty-text">Adjust your filters or run <code
+            style="font-family:var(--font-mono);color:var(--violet-light)">python manage.py seed_trends</code></p>
+        <a href="{% url 'dashboard' %}" class="btn btn-primary btn-sm">Clear Filters</a>
+      </div>
+      {% endif %}
+    </div>
+
+    <aside>
+      <div class="card" style="position:sticky;top:calc(56px + 16px)">
+        <div class="sidebar-section-title">Top 10 Signals</div>
+        {% for trend in top_trends %}
+        <a href="{% url 'trend_detail' trend.pk %}" style="display:block">
+          <div class="top-trend-item">
+            <span
+              class="top-rank {% if forloop.counter == 1 %}r1{% elif forloop.counter == 2 %}r2{% elif forloop.counter == 3 %}r3{% endif %}">{{ forloop.counter }}</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ trend.title }}</div>
+              <div style="display:flex;gap:4px;margin-top:3px">
+                <span class="velocity-badge velocity-{{ trend.velocity }}" style="font-size:9px;padding:1px 5px">{{ trend.velocity_icon }}</span>
+                <span class="platform-tag" style="font-size:9px">{{ trend.get_platform_display }}</span>
+              </div>
+            </div>
+            <span
+              style="font-family:var(--font-mono);font-size:13px;font-weight:800;color:var(--violet-light);flex-shrink:0">{{ trend.score|floatformat:0 }}</span>
+          </div>
+        </a>
+        {% endfor %}
+
+        {% if not user.is_authenticated %}
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--b-subtle);text-align:center">
+          <p style="font-size:12px;color:var(--t-secondary);margin-bottom:10px">Sign in for AI insights &amp; saved
+            trends</p>
+          <a href="{% url 'register' %}" class="btn btn-primary btn-sm btn-full">Create Free Account</a>
+        </div>
+        {% endif %}
+      </div>
+    </aside>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>window.USER_INITIAL = "{{ user.display_name|slice:':1'|upper|default:'U' }}";</script>
+{% endblock %}

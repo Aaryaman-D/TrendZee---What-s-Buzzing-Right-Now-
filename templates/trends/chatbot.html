@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Chat — TrendZee{% endblock %}
+
+{% block extra_css %}
+<style>
+  .main-content { overflow: hidden; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chat-page">
+  <div class="chat-container">
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <div class="chat-ai-avatar">🤖</div>
+      <div>
+        <div style="font-family: var(--font-display); font-weight: 700; font-size: 16px;">
+          Trend Intelligence Assistant
+        </div>
+        <div style="font-size: 12px; color: var(--accent-teal);">
+          <i class="fas fa-circle" style="font-size: 8px;"></i> Active — Restricted to trend data
+        </div>
+      </div>
+      <div style="margin-left: auto;">
+        <span class="badge" style="background: rgba(124,106,255,0.1); color: var(--accent-primary); border: 1px solid rgba(124,106,255,0.2);">
+          Powered by Gemini
+        </span>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="chat-messages" id="chatMessages">
+      <!-- Welcome message -->
+      <div class="chat-message chat-message--ai">
+        <div class="message-avatar message-avatar--ai">🤖</div>
+        <div class="message-bubble">
+          Hello! I'm your Trend Intelligence Assistant.<br><br>
+          I can help you with:<br>
+          • Understanding why specific trends are going viral<br>
+          • Comparing engagement across categories<br>
+          • Content strategy for trending topics<br>
+          • Platform-specific trend analysis<br><br>
+          <em style="color: var(--text-muted); font-size: 13px;">
+            Note: I only answer questions related to social media trends and data on this platform.
+          </em>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="chat-disclaimer">
+      🔒 Restricted to trend intelligence only. Questions unrelated to trends will be redirected.
+    </div>
+
+    <!-- Input Area -->
+    <div class="chat-input-area">
+      <textarea
+        id="chatInput"
+        class="chat-input"
+        placeholder="Ask about trending topics, engagement patterns, content strategy..."
+        rows="1"
+      ></textarea>
+      <button id="sendBtn" class="chat-send-btn" title="Send message">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  window.USER_INITIAL = "{{ user.display_name|slice:':1'|upper|default:'U' }}";
+
+  // Auto-resize textarea
+  const textarea = document.getElementById('chatInput');
+  if (textarea) {
+    textarea.addEventListener('input', function () {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+  }
+</script>
+{% endblock %}
